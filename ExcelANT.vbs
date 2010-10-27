@@ -180,6 +180,14 @@ end class
 
 class TaskFactory
   private m_BuildPath
+  private m_fso
+
+  private sub Class_Initialize()
+    set m_fso=CreateObject("Scripting.FileSystemObject")
+  end sub
+  private sub Class_Terminate()
+    set m_fso=nothing
+  end sub
 
   public property get BuildPath
     BuildPath=m_BuildPath
@@ -201,18 +209,17 @@ class TaskFactory
         next
       case "extractmdb"
         set Build=new ExtractMDBTask
-        Build.Database=taskNode.attributes.getNamedItem("database").nodeValue
-        Build.Output=taskNode.attributes.getNamedItem("output").nodeValue
+        Build.Database=m_fso.GetFile(m_fso.BuildPath(Me.BuildPath,taskNode.attributes.getNamedItem("database").nodeValue)).Path
+        Build.Output=m_fso.GetFolder(m_fso.BuildPath(Me.BuildPath,taskNode.attributes.getNamedItem("output").nodeValue)).Path
         dim wrkgNode
         for each wrkgNode in taskNode.getElementsByTagName("wrkgrp")
-          Build.Workgroup=wrkgNode.getElementsByTagName("mdw")(0).text
+          Build.Workgroup=m_fso.GetFile(m_fso.BuildPath(Me.BuildPath,wrkgNode.getElementsByTagName("mdw")(0).text)).Path
           Build.Username=wrkgNode.getElementsByTagName("username")(0).text
           Build.Password=wrkgNode.getElementsByTagName("password")(0).text
         next
       case else
         err.raise 1,"Unknown Task " & taskNode.nodeName
     end select
-    Build.BuildPath=Me.BuildPath
   end function
 end class
 
@@ -275,18 +282,28 @@ class ExtractMDBTask
     WScript.Echo Me.Workgroup
     Wscript.Echo Me.Username
     Wscript.Echo Me.Password
-    WScript.Echo Me.BuildPath
-    Wscript.Echo m_fso.BuildPath(Me.BuildPath,Me.Database)
+    Wscript.Echo Me.Database
+    dim app,dbengine,ws,db
+    'May have to do a check for different versions here
+    set DBEngine=CreateObject("DAO.DBEngine.36")
+    set app.DBEngine=DBEngine
+    if Me.Workgroup<>"" then
+      DBEngine.SystemDB=Me.Workgroup
+      WScript.echo DBEngine.SystemDB
+      set ws=DBEngine.CreateWorkspace("ExcelANT",Me.Username,Me.Password)
+    else
+      set ws=DBEngine(0)
+    end if
+
+    set db=ws.OpenDatabase(Me.Database)
+
+    db.close
+    set db=nothing
+    ws.close
+    set ws=nothing
+    set DBEngine=nothing
+    set app=nothing
   end sub
-
-  private m_BuildPath
-
-  public property get BuildPath
-    BuildPath=m_BuildPath
-  End Property
-  public property let BuildPath(sBuildPath)
-    m_BuildPath=sBuildPath
-  End Property
 
 end class
 
@@ -301,14 +318,6 @@ class PrintTask
     m_text=sText
   end property
 
-  private m_BuildPath
-
-  public property get BuildPath
-    BuildPath=m_BuildPath
-  End Property
-  public property let BuildPath(sBuildPath)
-    m_BuildPath=sBuildPath
-  End Property
 end class
 
 class PrintValuesTask
@@ -333,14 +342,6 @@ class PrintValuesTask
     m_values.add sValue,sValue
   end sub
   
-  private m_BuildPath
-
-  public property get BuildPath
-    BuildPath=m_BuildPath
-  End Property
-  public property let BuildPath(sBuildPath)
-    m_BuildPath=sBuildPath
-  End Property
 end class
 
 class Project
