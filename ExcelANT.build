@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<project name="ExcelANT" default="decompile">
+  <target name="decompile" description="extract all the code and forms out of the file and into text files">
+    <extractVBS file="ExcelANT.vbs" output="source\" />
+  </target> 
+</project>

@@ -217,11 +217,74 @@ class TaskFactory
           Build.Username=wrkgNode.getElementsByTagName("username")(0).text
           Build.Password=wrkgNode.getElementsByTagName("password")(0).text
         next
+      case "extractVBS"
+        set Build=new ExtractVBSTask
+        Build.File=m_fso.GetFile(m_fso.BuildPath(Me.BuildPath,taskNode.attributes.getNamedItem("file").nodeValue)).Path
+        Build.Output=m_fso.GetFolder(m_fso.BuildPath(Me.BuildPath,taskNode.attributes.getNamedItem("output").nodeValue)).Path
       case else
         err.raise 1,"Unknown Task " & taskNode.nodeName
     end select
   end function
 end class
+
+class ExtractVBSTask
+  private m_fso
+
+  Private Sub Class_Initialize()
+    set m_fso=CreateObject("Scripting.FileSystemObject")
+  End Sub
+
+  Private Sub Class_Terminate()
+    set m_fso=nothing
+  End Sub
+
+  private m_File
+
+  public property get File
+    File=m_File
+  End Property
+  public property let File(sFile)
+    m_File=sFile
+  End Property
+
+  private m_Output
+
+  public property get Output
+    Output=m_Output 
+  End Property
+  public property let Output(sOutput)
+    m_Output=sOutput
+  End Property
+
+  
+  Public Sub Execute
+    dim classFinder
+    WScript.echo "Saving to " & me.Output
+
+    set classFinder=new RegExp
+    with classFinder
+      .IgnoreCase = True
+      .Global=True
+      .MultiLine=True
+      .pattern="^class (.+?)$[\s\S]+?end class$"
+    end with
+
+    dim sFile
+    sFile=m_fso.OpenTextFile(Me.File).ReadAll
+
+    dim m,writer,filename
+    for each m in classFinder.Execute(sFile)
+      fileName=m_fso.BuildPath(Me.Output,m.SubMatches.item(0)) & ".cls"
+      set writer=m_fso.OpenTextFile(fileName,2,true)
+      writer.Write m.Value
+    next
+
+    set writer=nothing
+    set classFinder=nothing
+  End Sub
+
+End Class
+
 
 class ExtractMDBTask
   private m_fso
@@ -279,29 +342,15 @@ class ExtractMDBTask
 
   
   public sub Execute()
-    WScript.Echo Me.Workgroup
-    Wscript.Echo Me.Username
-    Wscript.Echo Me.Password
-    Wscript.Echo Me.Database
     dim app,dbengine,ws,db
     'May have to do a check for different versions here
-    set DBEngine=CreateObject("DAO.DBEngine.36")
-    set app.DBEngine=DBEngine
-    if Me.Workgroup<>"" then
-      DBEngine.SystemDB=Me.Workgroup
-      WScript.echo DBEngine.SystemDB
-      set ws=DBEngine.CreateWorkspace("ExcelANT",Me.Username,Me.Password)
-    else
-      set ws=DBEngine(0)
-    end if
-
-    set db=ws.OpenDatabase(Me.Database)
-
-    db.close
-    set db=nothing
-    ws.close
-    set ws=nothing
-    set DBEngine=nothing
+    set app=CreateObject("Access.Application")
+    wscript.echo app.DBEngine.SystemDB
+    app.OpenCurrentDatabase "O:\Common\dev\SurveyProcessing\build\Me.Database",false
+    dim m
+    for each m in app.CurrentProject.AllModules
+      Wscript.echo m.Name
+    next
     set app=nothing
   end sub
 
