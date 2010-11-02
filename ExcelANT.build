@@ -4,5 +4,6 @@
     <extractVBS file="ExcelANT.vbs" output="source\" />
   </target> 
   <target name="build" description="compile all specified files into a single VBScript">
+    <print text="building" />
   </target>
 </project>

@@ -13,6 +13,7 @@ class ExcelANT
   private m_buildfile
   private m_currentdir
   private m_project
+  private m_target
 
   Private Sub Class_Initialize()
     set m_fso=CreateObject("Scripting.FileSystemObject")
@@ -28,6 +29,9 @@ class ExcelANT
     if m_opts.Exists("buildfile") then
       m_buildfile=m_opts.Value("buildfile")
     end if
+
+    WScript.echo "Last Argument:" & WScript.Arguments(Wscript.Arguments.count-1) 
+    WScript.echo "Build exists:" & m_opts.Exists("build")
   end Sub 
 
   Private Sub Class_Terminate()
@@ -125,7 +129,7 @@ class ExcelANT
   end sub
 
   public Sub Execute()
-    m_project.Execute
+    m_project.Execute m_target
   end sub
 end class
 
@@ -453,8 +457,10 @@ class Project
     t.AddTasks targetNode.childNodes
   end sub
 
-  public sub Execute()
-    m_targets.item(Me.Default).Execute
+  public sub Execute(targetName)
+    if targetName="" then targetName=Me.Default
+    WScript.Echo targetName
+    m_targets.item(targetName).Execute
   end sub
 end class
 
@@ -479,6 +485,7 @@ class Options
     end with
     dim txt,argument,matches,parts,part,opt
     for each txt in WScript.Arguments
+      wscript.echo "Working on argument:" & txt
       parts=split(splitter.Replace(txt,"####è"),"####è",3)
       select case ubound(parts)
         case 0
@@ -546,4 +553,8 @@ class Options
       Value=false
     end if
   end function
+
+  public property get Keys
+    Keys=m_opts.Keys
+  end property
 end class

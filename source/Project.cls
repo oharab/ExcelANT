@@ -51,7 +51,9 @@ class Project
     t.AddTasks targetNode.childNodes
   end sub
 
-  public sub Execute()
-    m_targets.item(Me.Default).Execute
+  public sub Execute(targetName)
+    if targetName="" then targetName=Me.Default
+    WScript.Echo targetName
+    m_targets.item(targetName).Execute
   end sub
 end class

@@ -4,6 +4,7 @@ class ExcelANT
   private m_buildfile
   private m_currentdir
   private m_project
+  private m_target
 
   Private Sub Class_Initialize()
     set m_fso=CreateObject("Scripting.FileSystemObject")
@@ -19,6 +20,9 @@ class ExcelANT
     if m_opts.Exists("buildfile") then
       m_buildfile=m_opts.Value("buildfile")
     end if
+
+    WScript.echo "Last Argument:" & WScript.Arguments(Wscript.Arguments.count-1) 
+    WScript.echo "Build exists:" & m_opts.Exists("build")
   end Sub 
 
   Private Sub Class_Terminate()
@@ -116,6 +120,6 @@ class ExcelANT
   end sub
 
   public Sub Execute()
-    m_project.Execute
+    m_project.Execute m_target
   end sub
 end class
