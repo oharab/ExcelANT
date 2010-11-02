@@ -3,4 +3,6 @@
   <target name="decompile" description="extract all the code and forms out of the file and into text files">
     <extractVBS file="ExcelANT.vbs" output="source\" />
   </target> 
+  <target name="build" description="compile all specified files into a single VBScript">
+  </target>
 </project>

@@ -279,6 +279,13 @@ class ExtractVBSTask
       writer.Write m.Value
     next
 
+    dim mainText
+    mainText=classFinder.replace(sFile,"")
+
+    fileName=m_fso.BuildPath(Me.Output,"main.bas")
+    set writer=m_fso.OpenTextFile(fileName,2,true)
+    writer.Write mainText
+
     set writer=nothing
     set classFinder=nothing
   End Sub
