@@ -19,7 +19,6 @@ class Options
     end with
     dim txt,argument,matches,parts,part,opt
     for each txt in WScript.Arguments
-      wscript.echo "Working on argument:" & txt
       parts=split(splitter.Replace(txt,"####è"),"####è",3)
       select case ubound(parts)
         case 0

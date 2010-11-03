@@ -21,8 +21,9 @@ class ExcelANT
       m_buildfile=m_opts.Value("buildfile")
     end if
 
-    WScript.echo "Last Argument:" & WScript.Arguments(Wscript.Arguments.count-1) 
-    WScript.echo "Build exists:" & m_opts.Exists("build")
+    if m_opts.Exists("target") then
+      m_target=m_opts.Value("target")
+    end if
   end Sub 
 
   Private Sub Class_Terminate()
@@ -40,7 +41,8 @@ class ExcelANT
     vbtab & WScript.ScriptName & " [options] <target> <target>" & vbcrlf & _
     "Options:" & vbcrlf & _
     vbcrlf & _
-    " -buildfile:<text>" & vbtab & "Use given buildfile (Short format /f)" & vbcrlf & _
+    " -buildfile=<text>" & vbtab & "Use given buildfile " & vbcrlf & _
+    " -target=<text>" & vbtab & "Process given target" & vbcrlf & _
     " -h[elp]" & vbtab & "Prints this message" & vbcrlf & _
     vbcrlf & _
     "A file ending in .build will be used if no buildfile is specified."

@@ -1,2 +1,4 @@
 Test.mdb
 *.ldb
+build
+build\*
