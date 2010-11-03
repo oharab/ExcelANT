@@ -22,19 +22,25 @@ class BuildVBSTask
   End Property
 
   Public Sub AddInput(sFileName)
+    wscript.echo "Storing " & sFileName
     m_files.Push sFileName
   End Sub
 
   Public Sub Execute
+    if m_fso.FileExists(me.File) then
+      m_fso.DeleteFile(me.File)
+    end if
     dim op
-    set op=m_fso.OpenTextFile(me.File,2)
     dim f
     f=m_files.Pop
 
+    set op=m_fso.OpenTextFile(me.File,8,true)
     do until f=""
-      Wscript.echo f
+      dim sFile
+      Wscript.echo "Reading " & f
+      sFile=m_fso.OpenTextFile(f).ReadAll
+      op.Write sFile
       f=m_files.Pop
-      op.Write f
     loop 
 
     op.Close
