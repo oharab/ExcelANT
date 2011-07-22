@@ -1,6 +1,6 @@
 obj/
-bin/
 !NAnt/
+bin/
 *.suo
 *.user
 *.swp

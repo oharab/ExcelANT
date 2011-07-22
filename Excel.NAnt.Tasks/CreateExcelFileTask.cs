@@ -4,7 +4,7 @@
     using global::NAnt.Core;
     using global::NAnt.Core.Attributes;
     using global::NAnt.Core.Types;
-    using Microsoft.Office.Interop.Excel;
+    using XL=Microsoft.Office.Interop.Excel;
     using System.IO;
     using System.Collections.Generic;
 
@@ -15,14 +15,14 @@
 
         protected override void ExecuteTask()
         {
-            Application app = new Application();
+            XL.Application app = new XL.Application();
             try
             {
                 string savePath = resolveFilePath(this.OutputFile);
                 if (File.Exists(savePath))
                     throw new BuildException(string.Format("The file '{0}' already exists.", savePath));
 
-                Workbook w = app.Workbooks.Add(XlWBATemplate.xlWBATWorksheet);
+                XL.Workbook w = app.Workbooks.Add(XL.XlWBATemplate.xlWBATWorksheet);
                 
                 Console.WriteLine("Setting References ...{0} of them.", references.FileNames.Count);
 
@@ -41,7 +41,23 @@
                     w.VBProject.VBComponents.Import(path);
                 }
 
+                bool firstWorksheetModified = false;
+                foreach (Worksheet sheet in this.Worksheets)
+                {
+                    Console.WriteLine("Creating Worksheet {0}.", sheet.SheetName);
+                    XL.Worksheet newSheet;
+                    if (!firstWorksheetModified)
+                    {
+                        newSheet = w.Worksheets[1] as XL.Worksheet;
+                        firstWorksheetModified = true;
+                    }
+                    else
+                        newSheet = w.Worksheets.Add() as XL.Worksheet;
+
+                    newSheet.Name = sheet.SheetName;
+                }
                 w.SaveAs(savePath);
+                Console.WriteLine("File saved to: " + w.FullName);
             }
             finally
             {
@@ -104,7 +120,17 @@
         {
             get { return references; }
             set { references = value; }
-        }        
+        }
+
+        private Worksheets worksheets=new Worksheets();
+
+        [BuildElementCollection("worksheets","worksheet",Required=false)]
+        public Worksheets Worksheets
+        {
+            get { return worksheets; }
+            set { worksheets = value; }
+        }
+        
         
     }
 }

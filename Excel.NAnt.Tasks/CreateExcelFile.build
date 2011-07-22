@@ -15,8 +15,16 @@
         <include name="**/*.bas" />
       </modules>
       <references>
-        <include name="C:\Program Files\Common Files\Microsoft Shared\DAO\dao360.dll" />
+        <include name="C:\Documents and Settings\721116\Application Data\Microsoft\AddIns\WeeklyPerformanceData.xla" />
       </references>
+      <worksheets>
+        <worksheet name="Download">
+        </worksheet>
+        <worksheet name="Response">
+        </worksheet>
+        <worksheet name="Notes">
+        </worksheet>
+      </worksheets>
     </CreateExcelFile>
   </target>
 </project>
