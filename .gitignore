@@ -1,4 +1,7 @@
-Test.mdb
-*.ldb
-build
-build\*
+obj/
+bin/
+!NAnt/
+*.suo
+*.user
+*.swp
+
