@@ -1,16 +1,1 @@
-ExcelANT
-VBScript build tool, similar to NAnt, MSBuild and other related projects.
-
-Despite it's name, ExcelANT isn't just for Excel, it will build a range of VBScript and VBA projects from source files.
-
-The idea behind ExcelANT is to create an easy way of exporting code modules from your application as text files, so they can be easily stored in an SCM repository.
-
-Like NAnt, it uses a .build file to define tasks to run. Generally the tasks are in pairs, one to save the code as text and another to import the source into a new or existing file. There may also be other utility tasks to do things like create directories, etc.
-
-Tasks
-PrintTask - A debugging task that echoes the supplied text.
-PrintValuesTask - A debugging task that accepts a range of text values to echo.
-ExtractVBSTask - Takes a VBScript file and extracts all the classes into separate .cls files and keeps all the remaining code as main.bas.
-BuildVBSTask - Takes a list of files and imports them into a single, specified VBScript file, ready to be ran.
-
-Other tasks, including Extracting and Building MS Access, MS Excel and MS Word files are under development.
+Custom NAnt Tasks for the creation and manipulation of MS Office files.
