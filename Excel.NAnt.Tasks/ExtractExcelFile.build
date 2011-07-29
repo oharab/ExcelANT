@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="Create Excel File" default="default" basedir=".">
+  <description>This is an example build file.</description>
+
+  <target name="setup">
+    <loadtasks assembly=".\Excel.NAnt.Tasks.dll" />
+    <property name="output.folder" value="${path::combine(path::get-temp-path(),'backup')}"  />
+  </target>
+  <target name="clean" depends="setup">
+    <delete folder="${output.folder}" />
+  </target>
+  <target name="default" description="Default Task" depends="clean">
+    <ExtractExcelFile outputFolder="${output.file}">
+      <modules>
+        <Exclude name="Sheet1" />
+      </modules>
+    </ExtractExcelFile>
+  </target>
+</project>

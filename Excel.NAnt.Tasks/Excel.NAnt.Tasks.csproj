@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateExcelFileTask.cs" />
+    <Compile Include="ExtractExcekFileTask.cs" />
     <Compile Include="Modules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="References.cs" />
@@ -76,6 +77,9 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ExtractExcelFile.build">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="CreateExcelFile.build">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
